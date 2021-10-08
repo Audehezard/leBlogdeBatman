@@ -18,4 +18,14 @@ class MainController extends AbstractController
         return $this->render('main/home.html.twig');
     }
 
+    /**
+     * Contrôleur de la page profil
+     *
+     * @Route("/mon-profil/", name="main_profile")
+     * @Security("is_granted('ROLE_user')")
+     */
+    public function profile(): Response
+    {
+        return $this->render('main/profile.html.twig');
+    }
 }

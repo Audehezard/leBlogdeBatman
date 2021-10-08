@@ -16,7 +16,7 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // Si l'utilisateur est déjà connecté, on le redirige sur l'accueil
+        // Si l'utilisateur est déjà connecté, on le redirige sur la page d'accueil
         if ($this->getUser()) {
             return $this->redirectToRoute('main_home');
         }
