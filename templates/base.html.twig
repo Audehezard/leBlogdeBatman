@@ -1,0 +1,78 @@
+{# Variable Twig contenant le nom de la route actuelle (pour le menu) #}
+{% set route = app.request.attributes.get('_route') %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {# TODO : Dynamiser le nom du site #}
+    <title>{% block title %}{% endblock %} - Le Blog de Batman</title>
+    {# Inclusion Font-Awesome #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+    {# Inclusion CSS Bootstrap #}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    {# Inclusion Styles perso #}
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
+    {# Bloc pour ajouter des fichiers CSS additionnels #}
+    {% block css %}{% endblock %}
+
+</head>
+<body>
+
+    {# Navbar principale #}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black main-navbar">
+        <div class="container-fluid">
+
+            {# Logo et titre du site #}
+            <a class="navbar-brand" href="{{ path('main_home') }}">
+                {# TODO: dynamiser nom du site #}
+                <img src="{{ asset('images/embleme-batman.png') }}" alt="" class="img-fluid main-navbar-logo">Le Blog de Batman
+            </a>
+
+            {# Bouton burger #}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                {# Paquet des boutons de gauche #}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link{{ route == 'main_home' ? ' active' }}" href="{{ path('main_home') }}"><i class="fas fa-home mx-1"></i>Accueil</a>
+                    </li>
+                </ul>
+
+                {# Paquet des boutons de droite #}
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user-plus mx-1"></i>Inscription</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-sign-in-alt mx-1"></i>Connexion</a>
+                    </li>
+                </ul>
+
+                {# Formulaire de recherche #}
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Trouver un article" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    {# Bloc pour afficher le contenu des pages #}
+    {% block body %}{% endblock %}
+
+
+
+{# Inclusion JS Bootstrap #}
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    {# Bloc pour ajouter des fichiers JS additionnels #}
+    {% block js %}{% endblock %}
+</body>
+</html>
