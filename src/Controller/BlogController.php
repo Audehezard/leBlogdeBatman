@@ -71,4 +71,16 @@ class BlogController extends AbstractController
                'articles' => $articles,
            ]);
        }
+    /**
+     * Page permettant de voir un article en détail
+     *
+     * @Route("/publication/{slug}", name="publication_view")
+     */
+    public function PublicationView (Article $article): Response
+    {
+        return $this->render('blog/publicationView.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
 }
