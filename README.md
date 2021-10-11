@@ -5,7 +5,7 @@
 ### Cloner le projet
 
 ```
-git clone https://github.com/Anthony-Dmn/leblogdebatman.git
+git clone https://github.com/Audehezard/leBlogdeBatman.git
 ```
 
 ### Modifier les paramètres d'environnement dans le fichier .env (changer user_db et password_db)
