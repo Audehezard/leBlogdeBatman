@@ -12,10 +12,25 @@
 
         <div class="row">
             <div class="col-12 col-md-4 offset-md-4">
-                {{ form( registrationForm ) }}
+                {{ form_start( registrationForm ) }}
+                {{ form_errors( registrationForm ) }}
+                {{ form_row(registrationForm.email ) }}
+                {{ form_row( registrationForm.pseudonym ) }}
+                <div class="mb-3">
+                    <div class="mb-2">Captcha de sécurité</div>
+                <div class="g-recaptcha"
+                     data-sitekey="{{ google_recaptcha_site_key }}"></div>
+                </div>
+                {{ form_row( registrationForm.save) }}
+                {{ form_end (registrationForm) }}
             </div>
         </div>
 
     </div>
 
+{% endblock %}
+
+{% block css %}
+    {# fichier JS nécessaire pour faire fonctionner le recaptcha #}
+    <script src="https://google.com/recaptcha/api.js" async defer></script>
 {% endblock %}

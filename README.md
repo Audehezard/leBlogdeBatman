@@ -22,4 +22,11 @@ composer install
 symfony console doctrine:database:create
 symfony console make:migration
 symfony console doctrine:migrations:migrate
+
+symfony console doctrines:fixtures:load
 ```
+Les fixtures créeront:
+* un compte admin (email admin@a.a, password : 666aaa)
+* 10 comptes utilisateurs (email aléatoire, password 666aaa
+* 200 articles
+* entre 0 et 10 commentaires par article)

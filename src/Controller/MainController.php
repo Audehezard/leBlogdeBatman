@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,8 +17,17 @@ class MainController extends AbstractController
      */
     public function home(): Response
     {
-        return $this->render('main/home.html.twig');
+
+        // Récupération des derniers articles publiés
+        $articleRepo = $this->getDoctrine()->getRepository(Article::class);
+
+        $articles = $articleRepo->findBy([], ['publicationDate' => 'DESC'], $this->getParameter('app.article.last_article_number'));
+
+        return $this->render('main/home.html.twig', [
+            'articles' => $articles,
+        ]);
     }
+
 
     /**
      * Contrôleur de la page profil

@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\NewArticleFormType;
 use DateTime;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -48,9 +50,9 @@ class BlogController extends AbstractController
 
             $this->addFlash('success', 'Article publié avec succès !');
 
-            // TODO: Changer la redirection vers la page de l'article créé
-            return $this->redirectToRoute('main_home');
-
+            return $this->redirectToRoute('blog_publication_view', [
+                'slug' => $newArticle->getSlug(),
+            ]);
         }
 
         return $this->render('blog/newPublication.html.twig', [
@@ -63,10 +65,23 @@ class BlogController extends AbstractController
         * @Route("/publication/liste", name="publication_list")
 
         */
-       public function PublicationList (): Response
+       public function PublicationList (Request $request, PaginatorInterface $paginator): Response
        {
-           $articleRepo = $this->getDoctrine()->getRepository(Article::class);
-           $articles = $articleRepo->findAll();
+           $requestedPage = $request->query->getInt('page',1);
+           //Vérification que le numéro de page est positif
+           if ($requestedPage <1){
+               throw new NotFoundHttpException();
+           }
+           $em=$this->getDoctrine()->getManager();
+           $query =$em->createQuery('SELECT a FROM App\Entity\Article a ORDER BY a.publicationDate DESC');
+
+           //Récupération des articles
+           $articles = $paginator ->paginate(
+               $query,
+               $requestedPage,
+               10
+           );
+
            return $this->render('blog/PublicationList.html.twig', [
                'articles' => $articles,
            ]);

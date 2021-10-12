@@ -7,7 +7,7 @@
     <div class="container-fluid">
 
         <div class="row">
-            <h1 class="col-12 text-center my-5">Publications du Blog de Batman</h1>
+            <h1 class="col-12 text-center my-5">{{ site_name }} publie</h1>
         </div>
 
         <div class="row">
@@ -15,29 +15,45 @@
             <div class="col-12 col-md-8 offset-md-2">
 
                 <div class="row">
-                    <p class="col-12 text-center">Nombre total d'articles : {{ articles|length }}</p>
+                    <p class="col-12 text-center">Nombre total d'articles : {{ articles.getTotalItemCount }}</p>
                 </div>
+                {# si articles affichage du menu pagination #}
+                {% if articles is not empty %}
+                    <div class="row">
+                        <div class="col-12 my-3 text-center">
+                            <div class="d-inline-block">
+                                {{ knp_pagination_render(articles) }}
+                            </div>
 
+                        </div>
+
+                    </div>
+                {% endif %}
                 {% for article in articles %}
 
-                    <div class="row">
-                        {# Un article #}
-                        <div class="col-12">
+                <div class="row">
+                    {# Un article #}
+                    <div class="col-12">
 
-                            <div class="card my-3 bg-black">
+                        <div class="card my-3 bg-black">
 
-                                <div class="card-header">
-                                    <div class="text-decoration-none" href= "{{path('blog_publication_view',{'slug': article.slug}) }}"><i class="far fa-newspaper me-2"></i>{{ article.title }}</a>
+                            <div class="card-header">
+                                <div class="text-decoration-none"
+                                     href="{{ path('blog_publication_view',{'slug': article.slug}) }}"><i
+                                            class="far fa-newspaper me-2"></i>{{ article.title }}</a>
                                 </div>
 
                                 <div class="card-body">
 
                                     <div class="mb-2">
-                                        {{ article.content|slice(0, 150) }}...
-                                        <a class="text-decoration-none" href="{{path('blog_publication_view',{'slug': article.slug}) }}"></a>
+                                        {{ article.content|striptags|slice(0, 150) }}...
+                                        <a class="text-decoration-none"
+                                           href="{{ path('blog_publication_view',{'slug': article.slug}) }}"></a>
                                     </div>
 
-                                    <footer class="blockquote-footer my-2">Publié le <strong>{{ article.publicationDate|date('d/m/Y à H\\hi') }}</strong> par <strong>{{ article.author.pseudonym }}</strong></footer>
+                                    <footer class="blockquote-footer my-2">Publié le
+                                        <strong>{{ article.publicationDate|date('d/m/Y à H\\hi') }}</strong> par
+                                        <strong>{{ article.author.pseudonym }}</strong></footer>
 
                                 </div>
 
@@ -46,19 +62,31 @@
                         </div>
                     </div>
 
-                {% else %}
+                    {% else %}
 
-                    <div class="row">
-                        <p class="col-12 text-center alert alert-warning">Aucune publication à afficher.</p>
-                    </div>
+                        <div class="row">
+                            <p class="col-12 text-center alert alert-warning">Aucune publication à afficher.</p>
+                        </div>
 
-                {% endfor %}
+                    {% endfor %}
 
+                    {# si article affichage du menu pagination #}
+                    {% if articles is not empty %}
+                        <div class="row">
+                            <div class="col-12 my-3 text-center">
+                                <div class="d-inline-block">
+                                    {{ knp_pagination_render(articles) }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
 
             </div>
 
         </div>
 
     </div>
+
 
 {% endblock %}
