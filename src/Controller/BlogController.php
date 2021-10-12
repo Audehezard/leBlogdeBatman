@@ -50,52 +50,102 @@ class BlogController extends AbstractController
 
             $this->addFlash('success', 'Article publié avec succès !');
 
+
             return $this->redirectToRoute('blog_publication_view', [
                 'slug' => $newArticle->getSlug(),
             ]);
+
         }
 
         return $this->render('blog/newPublication.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
     /**
-        * Page admin permettant d'afficher les publications
-         *
-        * @Route("/publication/liste", name="publication_list")
+     * Page qui liste tous les articles
+     *
+     * @Route("/publications/liste/", name="publication_list")
+     */
+    public function publicationList(Request $request, PaginatorInterface $paginator): Response
+    {
 
-        */
-       public function PublicationList (Request $request, PaginatorInterface $paginator): Response
-       {
-           $requestedPage = $request->query->getInt('page',1);
-           //Vérification que le numéro de page est positif
-           if ($requestedPage <1){
-               throw new NotFoundHttpException();
-           }
-           $em=$this->getDoctrine()->getManager();
-           $query =$em->createQuery('SELECT a FROM App\Entity\Article a ORDER BY a.publicationDate DESC');
+        // Récupération du numéro de la page demandée dans l'URL
+        $requestedPage = $request->query->getInt('page', 1);
 
-           //Récupération des articles
-           $articles = $paginator ->paginate(
-               $query,
-               $requestedPage,
-               10
-           );
+        // Vérification que le numéro est positif
+        if($requestedPage < 1){
+            throw new NotFoundHttpException();
+        }
 
-           return $this->render('blog/PublicationList.html.twig', [
-               'articles' => $articles,
-           ]);
-       }
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQuery('SELECT a FROM App\Entity\Article a ORDER BY a.publicationDate DESC');
+
+        // Récupération des articles
+        $articles = $paginator->paginate(
+            $query,
+            $requestedPage,
+            10
+        );
+
+
+        return $this->render('blog/publicationList.html.twig', [
+            'articles' => $articles,
+        ]);
+    }
+
     /**
      * Page permettant de voir un article en détail
      *
-     * @Route("/publication/{slug}", name="publication_view")
+     * @Route("/publication/{slug}/", name="publication_view")
      */
-    public function PublicationView (Article $article): Response
+    public function publicationView(Article $article): Response
     {
+
         return $this->render('blog/publicationView.html.twig', [
             'article' => $article,
         ]);
     }
 
+    /**
+     * @Route("/recherche/", name="search")
+     */
+    public function search(Request $request, PaginatorInterface $paginator): Response
+    {
+
+        // Récupération du numéro de la page demandée dans l'URL
+        $requestedPage = $request->query->getInt('page', 1);
+
+        // Vérification que le numéro est positif
+        if($requestedPage < 1){
+            throw new NotFoundHttpException();
+        }
+
+        $search = $request->query->get('q', '');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em
+            ->createQuery('SELECT a FROM App\Entity\Article a WHERE a.title LIKE :search OR a.content LIKE :search ORDER BY a.publicationDate DESC')
+            ->setParameters([
+                'search' => '%' . $search . '%',
+            ])
+        ;
+
+        // Récupération des articles
+        $articles = $paginator->paginate(
+            $query,
+            $requestedPage,
+            10
+        );
+
+
+        return $this->render('blog/listSearch.html.twig', [
+            'articles' => $articles,
+        ]);
+
+    }
+
 }
+

@@ -8,7 +8,7 @@
 git clone https://github.com/Audehezard/leBlogdeBatman.git
 ```
 
-### Modifier les paramètres d'environnement dans le fichier .env (changer user_db et password_db)
+### Modifier les paramètres d'environnement dans le fichier .env (changer user_db et password_db, clés google de Recaptcha)
 
 ### Déplacer le terminal dans le dossier cloné
 ```
@@ -24,6 +24,7 @@ symfony console make:migration
 symfony console doctrine:migrations:migrate
 
 symfony console doctrines:fixtures:load
+symfony console assets:install public
 ```
 Les fixtures créeront:
 * un compte admin (email admin@a.a, password : 666aaa)
