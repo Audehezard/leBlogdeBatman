@@ -1,18 +1,25 @@
 <?php
-namespace App\Recaptcha;
-/*service permettant de vérifier su un captcha est valide*/
 
+namespace App\Recaptcha;
+
+
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
+/**
+ * Service permettant de vérifier si un captcha est valide
+ */
 class RecaptchaValidator{
 
     private $params;
+
     public function __construct(ParameterBagInterface $params)
     {
         $this->params = $params;
-
     }
 
-    /** Methode qui renverra True si le captcha dont le code est passé en paramètres est valide, sinon false  **/
-
+    /**
+     * Méthode qui renverra "true" si le captcha dont le code est passé en paramétre est valide, sinon false
+     */
     public function verify(string $recaptchaResponse, string $ip = null){
 
         if(empty($recaptchaResponse)) {
@@ -43,4 +50,6 @@ class RecaptchaValidator{
         return $json->success;
 
     }
+
 }
+

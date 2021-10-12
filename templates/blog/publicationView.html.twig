@@ -28,7 +28,8 @@
                         <footer class="blockquote-footer mt-0 mb-4">Publié le <strong class="text-light">{{ article.publicationDate|date('d/m/Y à H\\hi') }}</strong> par <strong class="text-light">{{ article.author.pseudonym }}</strong></footer>
 
                         <div class="mb-2">
-                            /*protection de texte supplémentaire (purify)*/
+                            {#protection de texte supplémentaire (purify) #}
+
                             {{ article.content|purify }}
                         </div>
 

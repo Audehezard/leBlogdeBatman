@@ -19,7 +19,7 @@ class RegistrationController extends AbstractController
      *
      * @Route("/creer-un-compte/", name="app_register")
      */
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface, RecaptchaValidator  $recaptcha): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface, RecaptchaValidator $recaptcha): Response
     {
 
         // Si l'utilisateur est déjà connecté on le redirige sur l'accueil
@@ -54,22 +54,24 @@ class RegistrationController extends AbstractController
                             $user,
                             $form->get('plainPassword')->getData()
                         )
+                    )
 
-                //Hydratation de la base d'inscription de l'utilisateur
-            ->setRegistrationDate( new dateTime() ))
-            ;
+                    // Hydratation de la date d'incription de l'utilisateur
+                    ->setRegistrationDate( new \DateTime() )
+                ;
 
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+                // do anything else you need here, like send an email
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // do anything else you need here, like send an email
+                // On crée un message flash de succès
+                $this->addFlash('success', 'Votre compte a été créé avec succès !');
 
-            //on créer un message flash de succès
-            $this->addFlash('success','votre compte a été créé avec succès !);');
+                return $this->redirectToRoute('app_login');
 
-            return $this->redirectToRoute('app_login');
             }
+
         }
 
         return $this->render('registration/register.html.twig', [
