@@ -39,4 +39,13 @@ class MainController extends AbstractController
     {
         return $this->render('main/profile.html.twig');
     }
+    /**
+     * @Route("/edit-photo/", name="main_edit_photo")
+     * @security("is_granted('ROLE_USER')")
+     */
+    public function editPhoto():Response
+    {
+        return $this->render('main/editPhoto.html.twig');
+    }
+
 }

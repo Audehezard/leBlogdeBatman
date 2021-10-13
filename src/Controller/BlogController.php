@@ -35,12 +35,11 @@ class BlogController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $newArticle
                 ->setAuthor($this->getUser())
-                ->setPublicationDate( new DateTime() )
-            ;
+                ->setPublicationDate(new DateTime());
 
             $em = $this->getDoctrine()->getManager();
 
@@ -74,7 +73,7 @@ class BlogController extends AbstractController
         $requestedPage = $request->query->getInt('page', 1);
 
         // Vérification que le numéro est positif
-        if($requestedPage < 1){
+        if ($requestedPage < 1) {
             throw new NotFoundHttpException();
         }
 
@@ -118,7 +117,7 @@ class BlogController extends AbstractController
         $requestedPage = $request->query->getInt('page', 1);
 
         // Vérification que le numéro est positif
-        if($requestedPage < 1){
+        if ($requestedPage < 1) {
             throw new NotFoundHttpException();
         }
 
@@ -130,8 +129,7 @@ class BlogController extends AbstractController
             ->createQuery('SELECT a FROM App\Entity\Article a WHERE a.title LIKE :search OR a.content LIKE :search ORDER BY a.publicationDate DESC')
             ->setParameters([
                 'search' => '%' . $search . '%',
-            ])
-        ;
+            ]);
 
         // Récupération des articles
         $articles = $paginator->paginate(
@@ -147,5 +145,70 @@ class BlogController extends AbstractController
 
     }
 
+    /**
+     * Page admin servant à supprimer un article via son id passé dans l'URL
+     *
+     * @Route("/publication/suppression/{id}/", name="publication_delete")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function publicationDelete(Article $article, Request $request): Response
+    {
+
+        if(!$this->isCsrfTokenValid('blog_publication_delete_' . $article->getId(), $request->query->get('csrf_token'))){
+
+            $this->addFlash('error', 'Token sécurité invalide, veuillez ré-essayer.');
+        } else {
+
+            // Manager général
+            $em = $this->getDoctrine()->getManager();
+
+            // Suppression de l'article
+            $em->remove($article);
+            $em->flush();
+
+            // Message flash de succès + redirection sur la liste des articles
+            $this->addFlash('success', 'La publication a été supprimée avec succès !');
+        }
+
+
+        return $this->redirectToRoute('blog_publication_list');
+
+    }
+
+
+    /**
+     * Page permettant aux admins de modifier un article
+     *
+     * @Route("/publication/modifier/{id}/", name="publication_edit")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function publicationEdit(Article $article, Request $request): Response
+    {
+
+        $form = $this->createForm(NewArticleFormType::class, $article);
+
+        $form->handleRequest($request);
+
+        // Si formulaire ok
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Mise à jour dans la BDD
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->addFlash('success', 'Publication modifiée avec succès !');
+
+            return $this->redirectToRoute('blog_publication_view', [
+                'slug' => $article->getSlug(),
+            ]);
+
+        }
+
+        return $this->render('blog/publicationEdit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 }
+
 
